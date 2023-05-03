@@ -76,13 +76,6 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
         orig_loss = np.mean(orig_loss)
     end_time = time.time()
     dt = end_time - start_time
-
-    # if requires_control:
-    #     print('train: Epoch %3d (lr %.5f): loss %.5f, acc %.3f, orig_loss %.5f, orig_acc %.3f, time %3.1f' % (
-    #         epoch, lr, loss, acc, orig_loss, orig_acc, dt))
-    # else: 
-    #     print('train: Epoch %3d (lr %.5f): loss %.5f, acc %.3f, time %3.1f' % (
-    #         epoch, lr, loss, acc, dt))
     
     if requires_control:
         print(f'train: Epoch {epoch:3d} (lr {lr}): loss {loss:.5f}, acc {acc:.3f}, orig_loss {orig_loss:.5f}, orig_acc {orig_acc:.3f}, time {time:3.1f}')
@@ -93,47 +86,47 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
     torch.save(noise, 'noise/noise_cifar10_resnet_pgd_train.pt')
     # print
 
-### currently wont work with the rest of the code because not refactored and edited
-def val(epoch, net, loss_fn, data_loader, requires_control = True):
-    start_time = time.time()    
-    net.eval()
+# ######## currently wont work with the rest of the code because not refactored and edited
+# def val(epoch, net, loss_fn, data_loader, requires_control = True):
+#     start_time = time.time()    
+#     net.eval()
 
-    acc = []
-    loss = []
-    if requires_control:
-        orig_acc = []
-        orig_loss = []
-    for i, (orig, adv, label) in enumerate(data_loader):
-        adv = Variable(adv.cuda(non_blocking = True), volatile = True)
-        label = Variable(label.cuda(non_blocking = True), volatile = True)
-        logits = net(adv, defense = True)[-1]
-        acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
-        l = loss_fn(logits, label)
-        loss.append(l.data[0])
+#     acc = []
+#     loss = []
+#     if requires_control:
+#         orig_acc = []
+#         orig_loss = []
+#     for i, (orig, adv, label) in enumerate(data_loader):
+#         adv = Variable(adv.cuda(non_blocking = True), volatile = True)
+#         label = Variable(label.cuda(non_blocking = True), volatile = True)
+#         logits = net(adv, defense = True)[-1]
+#         acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
+#         l = loss_fn(logits, label)
+#         loss.append(l.data[0])
         
-        if requires_control:
-            orig = Variable(orig.cuda(non_blocking = True), volatile = True)
-            logits = net(orig)[-1]
-            orig_acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
-            l = loss_fn(logits, label)
-            orig_loss.append(l.data[0])            
+#         if requires_control:
+#             orig = Variable(orig.cuda(non_blocking = True), volatile = True)
+#             logits = net(orig)[-1]
+#             orig_acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
+#             l = loss_fn(logits, label)
+#             orig_loss.append(l.data[0])            
 
-    acc = np.mean(acc)
-    loss = np.mean(loss)
-    if requires_control:
-        orig_acc = np.mean(orig_acc)
-        orig_loss = np.mean(orig_loss)
-    end_time = time.time()
-    dt = end_time - start_time
+#     acc = np.mean(acc)
+#     loss = np.mean(loss)
+#     if requires_control:
+#         orig_acc = np.mean(orig_acc)
+#         orig_loss = np.mean(orig_loss)
+#     end_time = time.time()
+#     dt = end_time - start_time
 
-    if requires_control:
-        print('Validation: loss %.5f, acc %.3f, orig_loss %.5f, orig_acc %.3f, time %3.1f' % (
-            loss, acc, orig_loss, orig_acc, dt))
-    else: 
-        print('Validation: loss %.5f, acc %.3f, time %3.1f' % (
-            loss, acc, dt))
-    # print
-    # print
+#     if requires_control:
+#         print('Validation: loss %.5f, acc %.3f, orig_loss %.5f, orig_acc %.3f, time %3.1f' % (
+#             loss, acc, orig_loss, orig_acc, dt))
+#     else: 
+#         print('Validation: loss %.5f, acc %.3f, time %3.1f' % (
+#             loss, acc, dt))
+#     # print
+#     # print
 
  
 # def test(net, data_loader, result_file_name, defense = True):
@@ -154,6 +147,9 @@ def val(epoch, net, loss_fn, data_loader, requires_control = True):
 #                 acc_by_attack[attack] = correct
 #     np.save(result_file_name,acc_by_attack)
 
+
+
+##### refactored and edited this stuff
 def test(epoch, net, loss_fn, data_loader, requires_control = True):
     ## log outputs to noise folder. store the latest epoch only
     noise = {
@@ -214,13 +210,6 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
         orig_loss = np.mean(orig_loss)
     end_time = time.time()
     dt = end_time - start_time
-
-    # if requires_control:
-    #     print('test: Epoch %3d: loss %.5f, acc %.3f, orig_loss %.5f, orig_acc %.3f, time %3.1f' % (
-    #         epoch, loss, acc, orig_loss, orig_acc, dt))
-    # else: 
-    #     print('test: Epoch %3d: loss %.5f, acc %.3f, time %3.1f' % (
-    #         epoch, loss, acc, dt))
     
     if requires_control:
         print(f'test: Epoch {epoch:3d} (lr {-1}): loss {loss:.5f}, acc {acc:.3f}, orig_loss {orig_loss:.5f}, orig_acc {orig_acc:.3f}, time {time:3.1f}')
