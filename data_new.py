@@ -16,7 +16,7 @@ class DefenseDataset(Dataset):
         self.phase = phase
         self.attack = attack
 
-        self.dataset = torchvision.datasets.CIFAR10(root='datasets/CIFAR10/data', train=self.phase, transform=torchvision.transforms.ToTensor(), download=True)
+        self.dataset = torchvision.datasets.CIFAR10(root='datasets/CIFAR10/data', train=(True if self.phase == 'train' else False), transform=torchvision.transforms.ToTensor(), download=True)
 
         self.adv_imgs = torch.load(f'dataset/{self.attack}_samples_CIFAR10.pt')[phase]
         
