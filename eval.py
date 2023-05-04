@@ -66,7 +66,7 @@ def main():
     model = import_module('model')
     config, net = model.get_model()
     net = net.net#!
-    net.load_state_dict(torch.load('noise/noise_cifar10_resnet_pgd_train.pt')['net.state_dict()'], strict=False)
+    net.load_state_dict(torch.load('noise/noise_cifar10_resnet_pgd_train.pt')['net.state_dict()'])
     net = net.cuda()
     loss_fn = torch.nn.CrossEntropyLoss()
     
