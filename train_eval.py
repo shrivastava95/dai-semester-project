@@ -59,10 +59,10 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
                 orig_loss.append(l.item())
                 l = l.detach()
             
-            if requires_control:
-                print(f'{phase} mid-epoch: loss: {loss[-1]}, acc: {acc[-1]}, orig_loss: {orig_loss[-1]} orig_acc: {orig_acc[-1]}')
-            else:
-                print(f'{phase} mid-epoch: loss: {loss[-1]}, acc: {acc[-1]}')
+            # if requires_control:
+            #     print(f'{phase} mid-epoch: loss: {loss[-1]}, acc: {acc[-1]}, orig_loss: {orig_loss[-1]} orig_acc: {orig_acc[-1]}')
+            # else:
+            #     print(f'{phase} mid-epoch: loss: {loss[-1]}, acc: {acc[-1]}')
                 
 
     acc = np.mean(acc)
