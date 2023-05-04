@@ -170,38 +170,40 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
     if requires_control:
         orig_acc = []
         orig_loss = []
-    for i, (orig, adv, label) in enumerate(tqdm(data_loader)):
-        adv = Variable(adv.cuda(non_blocking = True), volatile = True)
-        orig = Variable(orig.cuda(non_blocking = True), volatile = True)
         
-        label = Variable(label.cuda(non_blocking = True))
-        outputs = net(adv, defense = True)
-        logits = outputs[-1]
-
-        acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
-        l = loss_fn(logits, label)
-        # loss.append(l.data[0])
-        loss.append(l.item())
-        l = l.detach()
-        pred_orig = outputs[0]
-        pred_noise = adv - pred_orig
-        actual_noise = adv - orig
-        noise['adv'].append(adv.detach().cpu())
-        noise['label'].append(label.detach().cpu())
-        noise['orig'].append(orig.detach().cpu())
-        noise['pred_noise'].append(pred_noise.detach().cpu())
-        noise['actual_noise'].append(actual_noise.detach().cpu())
-        
-        if requires_control:
+    with torch.no_grad():
+        for i, (orig, adv, label) in enumerate(tqdm(data_loader)):
+            adv = Variable(adv.cuda(non_blocking = True), volatile = True)
             orig = Variable(orig.cuda(non_blocking = True), volatile = True)
-            label = Variable(label.data, volatile = True)
-            logits = net(orig)[-1]
-            orig_acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
-            l = loss_fn(logits, label)
-            # orig_loss.append(l.data[0])
-            orig_loss.append(l.item())
-            l = l.detach()
             
+            label = Variable(label.cuda(non_blocking = True))
+            outputs = net(adv, defense = True)
+            logits = outputs[-1]
+
+            acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
+            l = loss_fn(logits, label)
+            # loss.append(l.data[0])
+            loss.append(l.item())
+            l = l.detach()
+            pred_orig = outputs[0]
+            pred_noise = adv - pred_orig
+            actual_noise = adv - orig
+            noise['adv'].append(adv.detach().cpu())
+            noise['label'].append(label.detach().cpu())
+            noise['orig'].append(orig.detach().cpu())
+            noise['pred_noise'].append(pred_noise.detach().cpu())
+            noise['actual_noise'].append(actual_noise.detach().cpu())
+            
+            if requires_control:
+                orig = Variable(orig.cuda(non_blocking = True), volatile = True)
+                label = Variable(label.data, volatile = True)
+                logits = net(orig)[-1]
+                orig_acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
+                l = loss_fn(logits, label)
+                # orig_loss.append(l.data[0])
+                orig_loss.append(l.item())
+                l = l.detach()
+                
 
     acc = np.mean(acc)
     loss = np.mean(loss)
