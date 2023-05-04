@@ -13,6 +13,7 @@ from data_new import DefenseDataset
 from torch.nn import DataParallel
 from torch.backends import cudnn
 from torch.utils.data import DataLoader
+import collections
 
 
 parser = argparse.ArgumentParser(description='PyTorch defense model')
@@ -66,7 +67,12 @@ def main():
     model = import_module('model')
     config, net = model.get_model()
     net = net.net#!
-    net.load_state_dict(torch.load('noise/noise_cifar10_resnet_pgd_train.pt')['net.state_dict()'])
+    state_dict = torch.load('noise/noise_cifar10_resnet_pgd_train.pt')['net.state_dict()']
+    new_state_dict = collections.OrderedDict()
+    for k, v in state_dict.items():
+        name = k.replace("module.", "") # remove `module.`
+        new_state_dict[name] = v
+    net.load_state_dict(new_state_dict)
     net = net.cuda()
     loss_fn = torch.nn.CrossEntropyLoss()
     
