@@ -4,7 +4,7 @@ import os
 import sys
 import argparse
 from importlib import import_module
-from train_eval import train, val,  test, Logger #!
+from train_eval import test, Logger #!
 import shutil
 import time
 
