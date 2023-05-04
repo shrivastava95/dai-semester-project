@@ -47,6 +47,7 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
             pred_orig = outputs[0]
             pred_noise = adv - pred_orig
             actual_noise = adv - orig
+
             
             if requires_control:
                 orig = Variable(orig.cuda(non_blocking = True), volatile = True)
@@ -57,6 +58,11 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
                 # orig_loss.append(l.data[0])
                 orig_loss.append(l.item())
                 l = l.detach()
+            
+            if requires_control:
+                print(f'{phase} mid-epoch: loss: {loss[-1]}, acc: {acc[-1]}, orig_loss: {orig_loss[-1]} orig_acc: {orig_acc[-1]}')
+            else:
+                print(f'{phase} mid-epoch: loss: {loss[-1]}, acc: {acc[-1]}')
                 
 
     acc = np.mean(acc)
@@ -68,9 +74,9 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
     dt = end_time - start_time
     
     if requires_control:
-        print(f'{phase}: (lr {-1}): loss {loss:.5f}, acc {acc:.3f}, orig_loss {orig_loss:.5f}, orig_acc {orig_acc:.3f}, time {dt:3.1f}')
+        print(f'{phase}: loss {loss:.5f}, acc {acc:.3f}, orig_loss {orig_loss:.5f}, orig_acc {orig_acc:.3f}, time {dt:3.1f}')
     else: 
-        print(f'{phase}: (lr {-1}): loss {loss:.5f}, acc {acc:.3f}, time {dt:3.1f}')
+        print(f'{phase}: loss {loss:.5f}, acc {acc:.3f}, time {dt:3.1f}')
     
     # print
     
