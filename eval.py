@@ -196,8 +196,8 @@ def main():
     # for epoch in range(start_epoch, args.epochs + 1):
     requires_control = True#epoch == start_epoch
     print()
-    test('train', net, loss_fn, train_loader, requires_control = requires_control)
     test('test', net, loss_fn, test_loader, requires_control = requires_control)
+    test('train', net, loss_fn, train_loader, requires_control = requires_control)
 
 if __name__ == '__main__':
     main()
