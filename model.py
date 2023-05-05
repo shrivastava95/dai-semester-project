@@ -1,4 +1,5 @@
 ## Contains the same code as resnext101.py!!!
+## update: is no longer the same, it used to be. contains modified version of old code.
 
 import torch
 import numpy as np
