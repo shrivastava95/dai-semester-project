@@ -78,9 +78,9 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
     dt = end_time - start_time
     
     if requires_control:
-        print(f'train: Epoch {epoch:3d} (lr {lr}): loss {loss:.5f}, acc {acc:.3f}, orig_loss {orig_loss:.5f}, orig_acc {orig_acc:.3f}, time {time:3.1f}')
+        print(f'train: Epoch {epoch:<3} (lr {lr:<10.6f}): loss {loss:<7.5f}, acc {acc:<5.3f}, orig_loss {orig_loss:<7.5f}, orig_acc {orig_acc:<5.3f}, time {dt:<10.1f}')
     else: 
-        print(f'train: Epoch {epoch:3d} (lr {lr}): loss {loss:.5f}, acc {acc:.3f}, time {time:3.1f}')
+        print(f'train: Epoch {epoch:<3} (lr {lr:<10.6f}): loss {loss:<7.5f}, acc {acc:<5.3f}, time {dt:<10.1f}')
     
     noise['net.state_dict()'] = net.state_dict()
     torch.save(noise, 'noise/noise_cifar10_resnet_pgd_train.pt')
@@ -170,7 +170,7 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
     if requires_control:
         orig_acc = []
         orig_loss = []
-        
+
     with torch.no_grad():
         for i, (orig, adv, label) in enumerate(tqdm(data_loader)):
             adv = Variable(adv.cuda(non_blocking = True), volatile = True)
@@ -212,11 +212,13 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
         orig_loss = np.mean(orig_loss)
     end_time = time.time()
     dt = end_time - start_time
-    
+
+
+            
     if requires_control:
-        print(f'test: Epoch {epoch:3d} (lr {-1}): loss {loss:.5f}, acc {acc:.3f}, orig_loss {orig_loss:.5f}, orig_acc {orig_acc:.3f}, time {time:3.1f}')
+        print(f'train: Epoch {epoch:<3}              : loss {loss:<7.5f}, acc {acc:<5.3f}, orig_loss {orig_loss:<7.5f}, orig_acc {orig_acc:<5.3f}, time {dt:<10.1f}')
     else: 
-        print(f'test: Epoch {epoch:3d} (lr {-1}): loss {loss:.5f}, acc {acc:.3f}, time {time:3.1f}')
+        print(f'train: Epoch {epoch:<3}              : loss {loss:<7.5f}, acc {acc:<5.3f}, time {dt:<10.1f}')
     
     torch.save(noise, 'noise/noise_cifar10_resnet_pgd_test.pt')
     # print
