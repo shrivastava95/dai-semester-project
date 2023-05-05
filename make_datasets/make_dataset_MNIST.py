@@ -20,7 +20,7 @@ def make_args():
     parser.add_argument(
         "--epochs",
         type=str,
-        default=20
+        default=10
     )
     args = parser.parse_args()
     return args
