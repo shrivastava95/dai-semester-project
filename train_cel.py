@@ -216,9 +216,9 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
 
             
     if requires_control:
-        print(f'train: Epoch {epoch:<3}              : loss {loss:<7.5f}, acc {acc:<5.3f}, orig_loss {orig_loss:<7.5f}, orig_acc {orig_acc:<5.3f}, time {dt:<10.1f}')
+        print(f'test : Epoch {epoch:<3}              : loss {loss:<7.5f}, acc {acc:<5.3f}, orig_loss {orig_loss:<7.5f}, orig_acc {orig_acc:<5.3f}, time {dt:<10.1f}')
     else: 
-        print(f'train: Epoch {epoch:<3}              : loss {loss:<7.5f}, acc {acc:<5.3f}, time {dt:<10.1f}')
+        print(f'test : Epoch {epoch:<3}              : loss {loss:<7.5f}, acc {acc:<5.3f}, time {dt:<10.1f}')
     
     torch.save(noise, 'noise/noise_cifar10_resnet_pgd_test.pt')
     # print
