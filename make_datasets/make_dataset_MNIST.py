@@ -19,7 +19,7 @@ def make_args():
     )
     parser.add_argument(
         "--epochs",
-        type=str,
+        type=int,
         default=10
     )
     args = parser.parse_args()
@@ -109,9 +109,9 @@ def main(args):
     test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
 
     # start attacking the trained model
-    pgd = torchattacks.PGD(model, eps=8/255, alpha=1/255, steps=10, random_start=True)
-    fgsm = torchattacks.FGSM(model, eps=8/255)
-    jitter = torchattacks.Jitter(model, eps=8/255, alpha=2/255, steps=10, scale=10, std=0.1, random_start=True)
+    pgd = torchattacks.PGD(model, eps=16/255, alpha=2/255, steps=10, random_start=True)
+    fgsm = torchattacks.FGSM(model, eps=16/255)
+    jitter = torchattacks.Jitter(model, eps=16/255, alpha=3/255, steps=10, scale=10, std=0.1, random_start=True)
 
     attacks = {"pgd": pgd, "fgsm": fgsm, "jitter": jitter}
 
