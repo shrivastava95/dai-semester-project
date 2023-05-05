@@ -104,6 +104,10 @@ def main(args):
         tqdm.write(" ")
         tqdm.write(" ")
 
+    # Load unshuffled datasets
+    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
+
     # start attacking the trained model
     pgd = torchattacks.PGD(model, eps=8/255, alpha=1/255, steps=10, random_start=True)
     fgsm = torchattacks.FGSM(model, eps=8/255)
@@ -113,6 +117,11 @@ def main(args):
 
     attacked_train = []
     attacked_test = []
+    clean_train = []
+    clean_test = []
+    labels_train = []
+    labels_test = []
+    
 
     cc, ct = 0, 0
     ac, at = 0, 0
@@ -136,6 +145,9 @@ def main(args):
 
             ac += (adv_preds == labels).sum().item()
             at += labels.shape[0]
+        
+        clean_train.append(images.cpu())
+        labels_train.append(labels.cpu())
 
     clean_acc_train = round(cc/ct, 4)
     adv_acc_train = round(ac/at, 4)
@@ -163,16 +175,21 @@ def main(args):
 
             ac += (adv_preds == labels).sum().item()
             at += labels.shape[0]
+            
+        clean_test.append(images.cpu())
+        labels_test.append(labels.cpu())
 
     clean_acc_test = round(cc/ct, 4)
     adv_acc_test = round(ac/at, 4)
     attacked_test = torch.cat(attacked_test, dim=0)
 
     dump = {
-            "train": attacked_train, "test": attacked_test, "model": model.state_dict(), 
+            "train_adv": attacked_train, "test_adv": attacked_test, "model": model.state_dict(), 
+            "train_label":  labels_train, "test_label": labels_test,
+            "train_clean":  clean_train, "test_clean": clean_test,
             "clean_acc": {"train": clean_acc_train, "test": clean_acc_test}, "adv_acc":{"train": adv_acc_train, "test": adv_acc_test}
     }
-    torch.save(dump, f"{args.attack_method}_samples_CIFAR10.pt")
+    torch.save(dump, f"{args.attack_method}_samples_MNIST.pt")
 
     print(f"For ResNet-18")
     print(f"For attack method: {args.attack_method}")
