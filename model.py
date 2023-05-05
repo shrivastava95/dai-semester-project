@@ -10,12 +10,12 @@ config['loss_idcs'] = [1]
 
 net_type = 'resnext101'
 config['net_type'] = net_type
-input_size = [299, 299]
+input_size = [32, 32]
 block = Conv
-fwd_out = [64, 128, 256, 256, 256]
-num_fwd = [2, 3, 3, 3, 3]
-back_out = [64, 128, 256, 256]
-num_back = [2, 3, 3, 3]
+fwd_out = [64, 128, 256]
+num_fwd = [2, 3, 3]
+back_out = [64, 128]
+num_back = [2, 3]
 n = 1
 hard_mining = 0
 loss_norm = False

@@ -73,7 +73,30 @@ class Null(nn.Module):
         return x
 
 
+# net_type = 'resnext101'
+# config['net_type'] = net_type
+# input_size = [299, 299]
+# block = Conv
+# fwd_out = [64, 128, 256, 256, 256]
+# num_fwd = [2, 3, 3, 3, 3]
+# back_out = [64, 128, 256, 256]
+# num_back = [2, 3, 3, 3]
+# n = 1
+# hard_mining = 0
+# loss_norm = False
+
 class Denoise(nn.Module):
+    # Denoise(input_size[0], input_size[1], block, 3, fwd_out, num_fwd, back_out, num_back)
+    # Denoise(
+    #     h_in     = 299, 
+    #     w_in     = 299, 
+    #     block    = Conv, same as: Sequential(Conv2d, BatchNorm2d, ReLU), 
+    #     fwd_in   = 3, 
+    #     fwd_out  = [64, 128, 256, 256, 256], 
+    #     num_fwd  = [2, 3, 3, 3, 3], 
+    #     back_out = [64, 128, 256, 256], 
+    #     num_back = [2, 3, 3, 3]
+    # )
     def __init__(self, h_in, w_in, block, fwd_in, fwd_out, num_fwd, back_out, num_back):
         super(Denoise, self).__init__()
 
@@ -130,11 +153,14 @@ class Denoise(nn.Module):
         outputs = []
         for i in range(len(self.fwd)):
             out = self.fwd[i](out)
+            print(out.shape)
             if i != len(self.fwd) - 1:
                 outputs.append(out)
         
         for i in range(len(self.back) - 1, -1, -1):
+            print(out.shape, end=' ')#
             out = self.upsample[i](out)
+            print(out.shape, outputs[i].shape)#
             out = torch.cat((out, outputs[i]), 1)
             out = self.back[i](out)
         out = self.final(out)
@@ -178,8 +204,9 @@ class Ishaan_Resnet(nn.Module):
         self.resnet = resnet
         self.denoise = denoise
 
+        
         self.denoise_fn = nn.Sequential(
-            torchvision.transforms.Resize([299, 299]),
+            torchvision.transforms.Resize(self.denoise.upsample[0].size),
             self.denoise,
             torchvision.transforms.Resize([32, 32]),
         )
@@ -195,7 +222,7 @@ class Ishaan_Resnet(nn.Module):
             self.resnet.layer4,
         )
 
-    def forward(self, x, defense = False):
+    def forward(self, x, defense = True):
         outputs = []
         if defense:
             x = self.denoise_fn(x)
