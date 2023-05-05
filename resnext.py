@@ -153,14 +153,11 @@ class Denoise(nn.Module):
         outputs = []
         for i in range(len(self.fwd)):
             out = self.fwd[i](out)
-            print(out.shape)
             if i != len(self.fwd) - 1:
                 outputs.append(out)
         
         for i in range(len(self.back) - 1, -1, -1):
-            print(out.shape, end=' ')#
             out = self.upsample[i](out)
-            print(out.shape, outputs[i].shape)#
             out = torch.cat((out, outputs[i]), 1)
             out = self.back[i](out)
         out = self.final(out)
@@ -222,7 +219,7 @@ class Ishaan_Resnet(nn.Module):
             self.resnet.layer4,
         )
 
-    def forward(self, x, defense = True):
+    def forward(self, x, defense = False):
         outputs = []
         if defense:
             x = self.denoise_fn(x)
