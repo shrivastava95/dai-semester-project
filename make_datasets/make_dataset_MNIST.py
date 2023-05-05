@@ -20,7 +20,7 @@ def make_args():
     parser.add_argument(
         "--epochs",
         type=str,
-        default=10
+        default=20
     )
     args = parser.parse_args()
     return args
@@ -73,24 +73,24 @@ def evaluate(epoch, model, test_loader, criterion):
 
 def main(args):
     transforms = tf.Compose([
-        #tf.Resize((128, 128)),
+        tf.Resize((32, 32)),
         tf.Grayscale(3),
         tf.ToTensor(),
         #tf.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
 
-    train_dataset = dsets.CIFAR10(root="./datasets/CIFAR10/data", train=True, download=True, transform=transforms)
-    test_dataset = dsets.CIFAR10(root="./datasets/CIFAR10/data", train=False, download=True, transform=transforms)
+    train_dataset = dsets.MNIST(root="./datasets/MNIST/data", train=True, download=True, transform=transforms)
+    test_dataset = dsets.MNIST(root="./datasets/MNIST/data", train=False, download=True, transform=transforms)
 
-    train_loader = DataLoader(train_dataset, batch_size=128)
-    test_loader = DataLoader(test_dataset, batch_size=128)
+    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=128, shuffle=True)
 
     model = torchvision.models.resnet18(weights="DEFAULT")
     model.fc = nn.Linear(512, 10, bias=True)
     model.cuda()
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=3e-4)
 
     # train the model
     stats = {"train":[], "test":[]}
