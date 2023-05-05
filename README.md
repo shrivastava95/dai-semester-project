@@ -20,3 +20,11 @@ Script for running code in the repository for 10 epochs with lr 3e-4 and batch s
 `python main.py --exp sample --workers 1 --epochs 10 --start-epoch 0 --batch-size 16 --learning-rate 0.0003 --weight-decay 0 --save-freq 1 --print-iter 1 --save-dir noise  --test 0 --test_e4 0 --defense 1 --optimizer adam`
 
 The gitignore ignores the logs outputted in `dataset/*` and `noise/*`
+
+
+
+---
+12. Add `eval.py`, `train_eval.py`, `eval.sh` and `eval_windows.sh` (equivalent to eval.sh, for use on lower resource laptop). Use `eval.sh` to run the evaluation script on the train and test dataset. The shell script runs `eval.py` with the appropriate flags, some of which are redundant and may be removed in the future. `eval.py` internally calls `train_eval.py` to run the model on the train and test loader.
+13. (incomplete) add the MNIST dataset wala part and run it. (files added: `data_new_mnist.py`, `datasets/MNIST` folder)
+14. (incomplete) add `make_datasets_MNIST.py`, finish and run it to create the attacked samples for MNIST dataset for ResNet18.
+15. (yet to start) add the unsupervised training edit from ishaan's minor 1 paper and run it.
