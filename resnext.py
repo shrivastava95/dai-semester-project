@@ -163,7 +163,7 @@ class Denoise(nn.Module):
             out = self.back[i](out)
         out = self.final(out)
         out = self.sigmoid(out)
-        out += x
+        out = out.clone() + x
         return out
 
 
