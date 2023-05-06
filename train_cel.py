@@ -49,7 +49,7 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
 
         #### ishaan: LN loss
         N = 2
-        ln = torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(1, 2, 3))
+        ln = torch.mean(torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(0, 1, 2, 3)))
         l = l + ln
         ####
 
