@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-path = 'noise/noise_cifar10_resnet_pgd_test3.pt'
+path = 'noise/noise_cifar10_resnet_pgd_test.pt'
 noise = torch.load(path)
 orig         = noise['orig'][0][0]
 adv          = noise['adv'][0][0]
