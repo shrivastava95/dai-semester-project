@@ -160,7 +160,7 @@ class Denoise(nn.Module):
             out = self.upsample[i](out)
             out = torch.cat((out, outputs[i]), 1)
             out = self.back[i](out)
-        out = self.final(out)
+        out = nn.Sigmoid()(self.final(out))
         out += x
         return out
 
