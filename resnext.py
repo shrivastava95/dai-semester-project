@@ -147,6 +147,7 @@ class Denoise(nn.Module):
         self.back = nn.ModuleList(back)
 
         self.final = nn.Conv2d(back_out[0] * expansion, fwd_in, kernel_size = 1, bias = False)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         out = x
@@ -161,7 +162,7 @@ class Denoise(nn.Module):
             out = torch.cat((out, outputs[i]), 1)
             out = self.back[i](out)
         out = self.final(out)
-        out = nn.Sigmoid()(out)
+        out = self.sigmoid(out)
         out += x
         return out
 
