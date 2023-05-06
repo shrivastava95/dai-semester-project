@@ -50,6 +50,7 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
         #### ishaan: LN loss
         N = 2
         ln = torch.pow((torch.abs(outputs[0] - orig)),  N)  / N
+        print(ln.shape)
         l = l + ln
         ####
 
