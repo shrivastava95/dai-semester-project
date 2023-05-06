@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-path = 'noise/noise_cifar10_resnet_pgd_train2.pt'
+path = 'noise/noise_cifar10_resnet_pgd_test3.pt'
 noise = torch.load(path)
 orig         = noise['orig'][0][0]
 adv          = noise['adv'][0][0]
@@ -18,7 +18,7 @@ print(type(pred_noise[0]))
 
 fig, axs = plt.subplots(nrows=1, ncols=3, figsize=[12, 4])
 axs[0].imshow(tf.ToPILImage()(orig))
-axs[1].imshow(tf.ToPILImage()(orig + pred_noise))
+axs[1].imshow(tf.ToPILImage()(adv - pred_noise))
 axs[2].imshow(tf.ToPILImage()(orig + actual_noise))
 axs[0].set_title('original image')
 axs[1].set_title('denoised image')

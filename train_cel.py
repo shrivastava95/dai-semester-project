@@ -46,6 +46,13 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
 
         acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
         l = loss_fn(logits, label)
+
+        #### ishaan: LN loss
+        N = 2
+        ln = (1 / N) * (torch.abs(outputs[0] - orig) ** N)
+        l = l + ln
+        ####
+        
         optimizer.zero_grad()
         l.backward()
         optimizer.step()
