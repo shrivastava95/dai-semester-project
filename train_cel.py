@@ -48,11 +48,12 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
         l = loss_fn(logits, label)
 
         #### ishaan: LN loss
-        N = 2
-        ln = (1 / N) * (torch.abs(outputs[0] - orig) ** N)
-        l = l + ln
+        # N = 2
+        # ln = (1 / N) * torch.exp(torch.abs(outputs[0] - orig) ** N)
+        # l = l + ln
+        # print(ln)
         ####
-        
+
         optimizer.zero_grad()
         l.backward()
         optimizer.step()
