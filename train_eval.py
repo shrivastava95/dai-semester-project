@@ -7,6 +7,8 @@ from torch import optim
 from torch.nn import DataParallel
 from tqdm import tqdm
 
+from train_cel import N, enable_ln_loss
+
 
 ##### refactored and edited this stuff
 def test(phase, net, loss_fn, data_loader, requires_control = True):
@@ -38,6 +40,15 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
             label = Variable(label.cuda(non_blocking = True))
             outputs = net(adv, defense = True)
             logits = outputs[-1]
+            
+            #### ishaan: LN loss
+            if enable_ln_loss:
+                ln = torch.mean(torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(0, 1, 2, 3)))
+                try:
+                    l = l + ln#!
+                except:
+                    l = ln
+            ####
 
             acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
             l = loss_fn(logits, label)

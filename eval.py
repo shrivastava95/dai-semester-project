@@ -8,6 +8,8 @@ from train_eval import test, Logger #!
 import shutil
 import time
 
+from train_cel import name_text
+
 from torch import optim
 from data_new import DefenseDataset
 from torch.nn import DataParallel
@@ -67,7 +69,7 @@ def main():
     model = import_module('model')
     config, net = model.get_model()
     net = net.net#!
-    state_dict = torch.load('noise/noise_cifar10_resnet_pgd_train.pt')['net.state_dict()']
+    state_dict = torch.load(f'noise/noise_cifar10_resnet_pgd_train{name_text}.pt')['net.state_dict()']
     new_state_dict = collections.OrderedDict()
     for k, v in state_dict.items():
         name = k.replace("module.", "") # remove `module.`
