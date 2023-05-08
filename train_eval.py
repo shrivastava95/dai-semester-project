@@ -41,6 +41,9 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
             outputs = net(adv, defense = True)
             logits = outputs[-1]
             
+            acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
+            l = loss_fn(logits, label)
+            
             #### ishaan: LN loss
             if enable_ln_loss:
                 ln = torch.mean(torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(0, 1, 2, 3)))
@@ -50,8 +53,6 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
                     l = ln
             ####
 
-            acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
-            l = loss_fn(logits, label)
             # loss.append(l.data[0])
             loss.append(l.item())
             l = l.detach()

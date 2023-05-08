@@ -191,6 +191,9 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
             label = Variable(label.cuda(non_blocking = True))
             outputs = net(adv, defense = True)
             logits = outputs[-1]
+            
+            acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
+            l = loss_fn(logits, label)
 
             #### ishaan: LN loss
             if enable_ln_loss:
@@ -201,8 +204,6 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
                     l = ln
             ####
 
-            acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
-            l = loss_fn(logits, label)
             # loss.append(l.data[0])
             loss.append(l.item())
             l = l.detach()
