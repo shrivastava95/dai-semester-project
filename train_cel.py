@@ -7,7 +7,9 @@ from torch import optim
 from torch.nn import DataParallel
 from tqdm import tqdm
 
-
+name_text = 'CE_L2'
+enable_ln_loss = True
+N = 2
 
 def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control = True):
     ## log outputs to noise folder. store the latest epoch only
@@ -48,9 +50,12 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
         l = loss_fn(logits, label)
 
         #### ishaan: LN loss
-        N = 2
-        ln = torch.mean(torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(0, 1, 2, 3)))
-        l = l + ln#!
+        if enable_ln_loss:
+            ln = torch.mean(torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(0, 1, 2, 3)))
+            try:
+                l = l + ln#!
+            except:
+                l = ln
         ####
 
         optimizer.zero_grad()
@@ -90,7 +95,7 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
         print(f'train: Epoch {epoch:<3} (lr {lr:<10.6f}): loss {loss:<7.5f}, acc {acc:<5.3f}, time {dt:<10.1f}')
     
     noise['net.state_dict()'] = net.state_dict()
-    torch.save(noise, 'noise/noise_cifar10_resnet_pgd_train.pt')
+    torch.save(noise, f'noise/noise_cifar10_resnet_pgd_train{name_text}.pt')
     # print
 
 # ######## currently wont work with the rest of the code because not refactored and edited
@@ -187,6 +192,15 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
             outputs = net(adv, defense = True)
             logits = outputs[-1]
 
+            #### ishaan: LN loss
+            if enable_ln_loss:
+                ln = torch.mean(torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(0, 1, 2, 3)))
+                try:
+                    l = l + ln#!
+                except:
+                    l = ln
+            ####
+
             acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
             l = loss_fn(logits, label)
             # loss.append(l.data[0])
@@ -227,7 +241,7 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
     else: 
         print(f'test : Epoch {epoch:<3}              : loss {loss:<7.5f}, acc {acc:<5.3f}, time {dt:<10.1f}')
     
-    torch.save(noise, 'noise/noise_cifar10_resnet_pgd_test.pt')
+    torch.save(noise, f'noise/noise_cifar10_resnet_pgd_test{name_text}.pt')
     # print
     
     
