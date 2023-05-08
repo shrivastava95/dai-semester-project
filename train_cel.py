@@ -11,7 +11,7 @@ name_text = 'L2'
 enable_ln_loss = True
 enable_ce_loss = False
 N = 2
-LN_scaling = 100
+LN_scaling = 1000
 
 def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control = True):
     ## log outputs to noise folder. store the latest epoch only
