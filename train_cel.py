@@ -11,6 +11,7 @@ name_text = 'L2'
 enable_ln_loss = True
 enable_ce_loss = False
 N = 2
+LN_scaling = 100
 
 def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control = True):
     ## log outputs to noise folder. store the latest epoch only
@@ -55,9 +56,9 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
         if enable_ln_loss:
             ln = torch.mean(torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(0, 1, 2, 3)))
             if enable_ce_loss:
-                l = l + ln#!
+                l = l + LN_scaling * ln#!
             else:
-                l = ln
+                l = LN_scaling* ln
         ####
 
         optimizer.zero_grad()
@@ -202,9 +203,9 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
             if enable_ln_loss:
                 ln = torch.mean(torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(0, 1, 2, 3)))
                 if enable_ce_loss:
-                    l = l + ln#!
+                    l = l + LN_scaling * ln#!
                 else:
-                    l = ln
+                    l = LN_scaling* ln
             ####
 
             # loss.append(l.data[0])
