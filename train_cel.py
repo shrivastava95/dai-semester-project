@@ -54,9 +54,9 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
         #### ishaan: LN loss
         if enable_ln_loss:
             ln = torch.mean(torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(0, 1, 2, 3)))
-            try:
+            if enable_ce_loss:
                 l = l + ln#!
-            except:
+            else:
                 l = ln
         ####
 
@@ -201,9 +201,9 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
             #### ishaan: LN loss
             if enable_ln_loss:
                 ln = torch.mean(torch.mean(torch.pow((torch.abs(outputs[0] - orig)),  N)  / N, dim=(0, 1, 2, 3)))
-                try:
+                if enable_ce_loss:
                     l = l + ln#!
-                except:
+                else:
                     l = ln
             ####
 
