@@ -186,7 +186,8 @@ def main():
             return args.lr * 0.01
 
     for epoch in range(start_epoch, args.epochs + 1):
-        requires_control = epoch == start_epoch
+        requires_control = (True if epoch == start_epoch else False)
+        print(f'requires_control: {requires_control}')
         train(epoch, net, loss_fn, train_loader, optimizer, get_lr, requires_control = requires_control)
         # val(epoch, net, loss_fn, val_loader, requires_control = requires_control)              # ishaan: uncomment this code after adding the val dataset
         test(epoch, net, loss_fn, test_loader, requires_control = requires_control)
