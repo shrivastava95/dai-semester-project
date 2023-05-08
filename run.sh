@@ -1,10 +1,10 @@
 python3 main.py \
        	--exp sample \
 	--workers 2  \
-	--epochs 10  \
+	--epochs 50  \
 	--start-epoch 0 \
-	--batch-size 16 \
-	--learning-rate 0.0003 \
+	--batch-size 128 \
+	--learning-rate 0.001 \
 	--weight-decay 0 \
 	--save-freq 1 \
 	--print-iter 1 \

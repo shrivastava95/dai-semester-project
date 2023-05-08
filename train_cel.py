@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 name_text = 'L2'
 enable_ln_loss = True
+enable_ce_loss = False
 N = 2
 
 def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control = True):
@@ -47,7 +48,8 @@ def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control 
         logits = outputs[-1]
 
         acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
-        l = loss_fn(logits, label)
+        if enable_ce_loss:
+            l = loss_fn(logits, label)
 
         #### ishaan: LN loss
         if enable_ln_loss:
@@ -193,7 +195,8 @@ def test(epoch, net, loss_fn, data_loader, requires_control = True):
             logits = outputs[-1]
             
             acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
-            l = loss_fn(logits, label)
+            if enable_ce_loss:
+                l = loss_fn(logits, label)
 
             #### ishaan: LN loss
             if enable_ln_loss:

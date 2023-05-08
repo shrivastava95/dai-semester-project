@@ -7,7 +7,7 @@ from torch import optim
 from torch.nn import DataParallel
 from tqdm import tqdm
 
-from train_cel import N, enable_ln_loss
+from train_cel import N, enable_ln_loss, enable_ce_loss
 
 
 ##### refactored and edited this stuff
@@ -42,7 +42,8 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
             logits = outputs[-1]
             
             acc.append(float(torch.sum(logits.data.max(1)[1] == label.data)) / len(label))
-            l = loss_fn(logits, label)
+            if enable_ce_loss:
+                l = loss_fn(logits, label)
             
             #### ishaan: LN loss
             if enable_ln_loss:
