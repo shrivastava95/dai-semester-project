@@ -7,9 +7,9 @@ from torch import optim
 from torch.nn import DataParallel
 from tqdm import tqdm
 
-name_text = 'CE'
-enable_ln_loss = False
-N = 1
+name_text = 'L2'
+enable_ln_loss = True
+N = 2
 
 def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control = True):
     ## log outputs to noise folder. store the latest epoch only
