@@ -8,7 +8,7 @@ from torch.nn import DataParallel
 from tqdm import tqdm
 
 name_text = 'CE_L1'
-enable_ln_loss = True
+enable_ln_loss = False
 N = 1
 
 def train(epoch, net, loss_fn, data_loader, optimizer, get_lr, requires_control = True):
