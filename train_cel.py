@@ -7,7 +7,7 @@ from torch import optim
 from torch.nn import DataParallel
 from tqdm import tqdm
 
-name_text = 'CE_L1'
+name_text = 'CE'
 enable_ln_loss = False
 N = 1
 
