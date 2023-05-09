@@ -221,6 +221,7 @@ class Ishaan_Resnet(nn.Module):
             self.resnet.layer4,
         )
 
+
     def forward(self, x, defense = False):
         outputs = []
         if defense:

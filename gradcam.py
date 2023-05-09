@@ -7,6 +7,7 @@ from importlib import import_module
 # from train_eval import Logger #!
 import shutil
 import time
+from matplotlib import pyplot as plt
 
 from train_cel import name_text
 
@@ -80,7 +81,8 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
     if requires_control:
         orig_acc = []
         orig_loss = []
-        
+    
+    from torchvision import transforms as tf
     with torch.no_grad():
         for i, (orig, adv, label) in enumerate(tqdm(data_loader)):
             adv = Variable(adv.cuda(non_blocking = True), volatile = True)
@@ -90,7 +92,14 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
             outputs = net(adv, defense = True)
             ###########################################################
             denoised = net.denoise_fn(adv)
-            _, features, scores = net(denoised)
+            
+            features = adv
+            print('BRUH WE IN  denoiseer', len(net.features))
+            for layer in net.features[:5]:
+                print(features.shape)
+                features = layer(features)
+
+            _, _, scores = net(denoised)
 
             for class_id in range(10):
                 loss = torch.Tensor([0])[0]
@@ -101,8 +110,10 @@ def test(phase, net, loss_fn, data_loader, requires_control = True):
 
                 alphas = torch.mean(features.grad, dim=(2, 3)).unsqueeze(2).unsqueeze(2)
                 print(features.shape, alphas.shape)
-                maps = 
-
+                maps = torch.sum(tf.Resize([32, 32])(features * alphas), dim=1)
+                maps = torch.nn.ReLU()(maps)
+                plt.imshow(maps[0].clone().cpu().detach().numpy(), cmap='hot', interpolation='nearest')
+                plt.show()
 
 
             

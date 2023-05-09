@@ -5,6 +5,7 @@ from torchvision import transforms as tf
 from importlib import import_module
 import collections
 
+image_idx = 2
 
 tt =  tf.Compose([
     tf.ToPILImage()
@@ -19,10 +20,10 @@ pred_nos = data['pred_noise']
 act_nos = data['actual_noise']
 labels = data['label']
 
-img1 = oks[0][0]
-img2 = advs[0][0]
-ps = pred_nos[0][0]
-an = act_nos[0][0]
+img1 = oks[0][image_idx]
+img2 = advs[0][image_idx]
+ps = pred_nos[0][image_idx]
+an = act_nos[0][image_idx]
 
 # print(img1)
 img1 = tt(img1)
@@ -72,26 +73,48 @@ net = net.cuda()
 orig, adv, label = oks[0], advs[0], labels[0]
 print(orig.shape, adv.shape, label.shape)
 adv = adv.cuda()
+scores = net(adv, defense=True)[2]
+print(label, scores.argmax(dim=1))
 label = label.cuda()
 
 ####################################
 denoised = net.denoise_fn(adv)
-_, features, scores = net(denoised)
+
+features = orig.cuda()
+features.requires_grad = True
+print('BRUH WE IN  denoiseer', len(net.features))
+for layer in net.features[:5]:
+    print(features.shape)
+    features = layer(features)
 features.retain_grad()
 
+features2 = features
+for layer in net.features[5:]:
+    features2 = layer(features2)
+x = features2
+
+size = x.size()
+x = x.view(size[0], size[1], -1)
+x = x.mean(2)
+# x = self.fc(x)
+scores = net.resnet.fc(x)
+
+
+# _, _, scores = net(denoised)
+
+fig, axs = plt.subplots(nrows=1, ncols=10, figsize=[40, 4])
 for class_id in range(10):
     loss = torch.Tensor([0])[0]
     loss.requires_grad = True
-    loss = loss + scores[0][class_id]
+    loss = loss + scores[class_id][class_id]
     loss.backward(retain_graph=True)
 
 
     alphas = torch.mean(features.grad, dim=(2, 3)).unsqueeze(2).unsqueeze(2)
     print(features.shape, alphas.shape)
-    maps = torch.sum(tf.Resize([224, 224])(features * alphas), dim=1)
+    maps = torch.sum(tf.Resize([32, 32])(features * alphas), dim=1)
     maps = torch.nn.ReLU()(maps)
-
-    
-    plt.imshow(maps[0].clone().cpu().detach().numpy(), cmap='hot', interpolation='nearest')
-    plt.title(f'{scores[0][class_id]}')
-    plt.show()
+    axs[class_id].imshow(maps[class_id].clone().cpu().detach().numpy(), cmap='hot', interpolation='nearest')
+    axs[class_id].set_title(f'label:{class_id}')
+fig.suptitle(f'original image class activation maps'.upper())
+plt.show()
